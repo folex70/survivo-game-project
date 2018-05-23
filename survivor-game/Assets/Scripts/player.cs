@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class player : MonoBehaviour {
+public class player : character {
 	
-	public float speed;
-	private Vector2 direction;
 	
 	// Use this for initialization
 	void Start () {
@@ -13,13 +11,9 @@ public class player : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		Move();
+	protected override void Update () {
 		GetInput();
-	}
-	
-	public void Move(){
-		transform.Translate(direction*speed*Time.deltaTime);
+		base.Update();
 	}
 	
 	private void GetInput(){
@@ -36,8 +30,6 @@ public class player : MonoBehaviour {
 		}
 		if (Input.GetKey(KeyCode.D)){
 			direction += Vector2.right;
-		}
-		
-		
+		}				
 	}
 }
