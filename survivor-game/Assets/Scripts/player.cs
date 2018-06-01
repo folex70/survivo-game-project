@@ -7,13 +7,13 @@ public class player : character {
 	
 	// Use this for initialization
 	void Start () {
-		
+		base.Start();
 	}
 	
 	// Update is called once per frame
-	protected override void Update () {
+	protected override void Update (){
 		GetInput();
-		base.Update();
+		base.Update(); //load superclass update method
 	}
 	
 	private void GetInput(){
