@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class player : character {
 	
@@ -12,6 +13,11 @@ public class player : character {
 	public float food;
 	public float globalTime; 
 	public float foodTime; 
+	public bool ableToChopTree;
+	public bool ableToMine;
+	public bool ableToPick;
+	public int chop;
+	public List<Item> Inventory = new List<Item> ();
 	
 	// Use this for initialization
 	void Start (){
@@ -46,7 +52,7 @@ public class player : character {
 			else if(food > 80 && life < 100){
 				life += 1;
 			}
-		}	
+		}				
 	}
 	
 	private void GetInput(){
@@ -64,9 +70,77 @@ public class player : character {
 		if (Input.GetKey(KeyCode.D)){
 			direction += Vector2.right;
 		}
-		if(Input.GetKey(KeyCode.E)){
-			print("pick item or action");
-		}
+
+	}
+
+	void OnCollisionEnter2D(Collision2D col){
+		print (col.gameObject.tag);
+	}
+
+	void OnCollisionStay2D(Collision2D col){
 		
+		if (col.gameObject.tag == "tree") {
+			ableToChopTree = true;
+
+			if (chop > 0) {
+				chop = 0;
+				col.gameObject.SendMessage ("DamageMaterial");
+			}
+			ableToPick = false;
+		} else if (col.gameObject.tag == "fruit") {
+			//pick fruit
+			ableToPick = true;
+		} else {
+			ableToPick = true;
+		}
+
+		if(Input.GetButtonDown("Fire1")){
+			print("pick item or action");
+
+			if (ableToChopTree) {
+				print ("chopping tree");
+				chop = 1;
+			}
+			if(ableToPick){
+				print ("pick something");
+				print ("inventory"+ Inventory.Count);
+				if (Inventory.Count < 9) {
+					Inventory.Add (new Item (Inventory.Count + 1, col.gameObject.tag));	
+					col.gameObject.SendMessage ("DesactiveMaterial");
+				} else {
+					print ("inventory full");
+				}
+			}
+		}
+
+	}
+
+	void OnCollisionExit2D(Collision2D col){
+		print (col.gameObject.tag);
+		ableToChopTree = false;
+		ableToPick = false;
+	}
+
+}
+
+public class Item: IComparable<Item>{
+	public int 		idItem;
+	public string 	name;
+
+	public Item(int newidItem, string newName){
+
+		idItem  = newidItem;
+		name 	= newName;	
+	}
+
+	public int CompareTo(Item other){
+		if (other == null) {
+			return 1;
+		}
+		if(other.idItem > this.idItem){
+			return other.idItem;
+		}
+			return this.idItem;
+
 	}
 }

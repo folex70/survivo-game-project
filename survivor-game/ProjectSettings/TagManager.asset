@@ -21,6 +21,7 @@ TagManager:
   - wall
   - floor
   - water
+  - inventory
   layers:
   - Default
   - TransparentFX
