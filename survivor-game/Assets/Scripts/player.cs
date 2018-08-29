@@ -20,6 +20,9 @@ public class player : character {
 	public List<Item> Inventory = new List<Item> ();
 	public GameObject [] Slots;
 	public Sprite [] Sprites; //0 - fruit 1 - wood
+	//------------------------------- 
+	//materials for create
+	public GameObject [] Prefabs;//woodPilePrefab
 	
 	// Use this for initialization
 	void Start (){
@@ -58,12 +61,16 @@ public class player : character {
 		//load inventory
 		foreach (Item slot in Inventory) {
 			
-			print(slot.name);
-			if(slot.name == "fruit"){
-				Slots[slot.idItem].GetComponent<Image>().sprite = Sprites[0];
-			}
-			else if(slot.name == "wood"){
-				Slots[slot.idItem].GetComponent<Image>().sprite = Sprites[1];
+			print("itens no inventorio: "+slot.name+""+slot.idItem);
+			if (slot.name == "fruit") {
+				Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [0];
+			} else if (slot.name == "wood_pile" || slot.name == "woodPile") {
+				Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [2];
+			} else if (slot.name == "wood") {
+				Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [1];
+			} else {
+			//empty nunca cai aqui
+				Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 			}
 			
 			
@@ -102,25 +109,29 @@ public class player : character {
 				col.gameObject.SendMessage ("DamageMaterial");
 			}
 			ableToPick = false;
-		} else if (col.gameObject.tag == "fruit") {
+		} else if (col.gameObject.tag == "fruit" || col.gameObject.tag =="wood" || col.gameObject.tag == "woodPile") {
 			//pick fruit
 			ableToPick = true;
+		} else if (col.gameObject.tag == "tent" || col.gameObject.tag =="campFire" || col.gameObject.tag =="campfire"){
+			ableToPick = false;
 		} else {
+			//@TODO corrigir essa parte, pois está pegando qq coisa!!
 			ableToPick = true;
 		}
 
 		if(Input.GetButtonDown("Fire1")){
-			print("pick item or action");
+			//print("pick item or action");
 
 			if (ableToChopTree) {
-				print ("chopping tree");
+				//print ("chopping tree");
 				chop = 1;
 			}
 			if(ableToPick){
-				print ("pick something");
-				print ("inventory"+ Inventory.Count);
+				//print ("pick something");
+				//print ("inventory"+ Inventory.Count);
 				if (Inventory.Count < 9) {
 					Inventory.Add (new Item (Inventory.Count + 1, col.gameObject.tag));	
+					Inventory.Sort ();
 					col.gameObject.SendMessage ("DesactiveMaterial");
 				} else {
 					print ("inventory full");
@@ -136,6 +147,59 @@ public class player : character {
 		ableToPick = false;
 	}
 
+	//public void Create(string name, int prefabCode ,string material, int qtd){
+	public void Create(string name){	
+		string material = "";
+		int prefabCode = 0; //0 - wood Pile 1- tent 2 -campfire
+		int qtd = 0;
+
+		if (name == "woodPile") {
+			material = "wood";
+			prefabCode = 0;
+			qtd = 3;
+		} else if (name == "tent") {
+			material = "woodPile";
+			prefabCode = 1;
+			qtd = 2;
+		} else if (name == "campFire") {
+			material = "woodPile";
+			prefabCode = 2;
+			qtd = 1;
+		}
+
+		//--------------------------------------------------------------------
+		//count woods for create
+		int countInInvetory = 0;		
+		foreach (Item slot in Inventory.ToArray()) {
+			print (material);
+			if(slot.name == material){
+				countInInvetory++;
+				print ("i have "+countInInvetory+" nubember of" +material);
+			}
+			print ("i have "+countInInvetory+" nubember of" +material);
+		}
+			//requeres "qtd" "material" for create a woodPile
+		if (countInInvetory >= qtd) {
+			Instantiate (Prefabs [prefabCode], new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y, 0), Quaternion.identity);	
+			int countRemovals = 0;
+			foreach (Item slot in Inventory.ToArray()) {
+				if (slot.name == material) {
+					Inventory.Remove (slot); 
+					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+					countRemovals++;
+					if (countRemovals >= qtd) {
+						break;
+					}
+				}
+			}	
+		} else {
+			print("Not enough material. Needs: "+qtd);
+		}
+
+		//}
+
+	}
+	//--------------------------------------------------------------------
 }
 
 public class Item: IComparable<Item>{
@@ -158,4 +222,5 @@ public class Item: IComparable<Item>{
 			return this.idItem;
 
 	}
+
 }

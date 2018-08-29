@@ -5,6 +5,9 @@ using UnityEngine;
 public class UI : MonoBehaviour {
 
 	public bool openInvetory;
+	public bool openCreateMenu;
+
+	public GameObject createMenu;
 
 	// Use this for initialization
 	void Start () {
@@ -25,7 +28,23 @@ public class UI : MonoBehaviour {
 
 		} else {
 			this.gameObject.SetActive (false);
+			createMenu.SetActive (false);
+			openCreateMenu = true;
 			openInvetory = true;
+		}
+
+	}
+
+	public void Create(){
+
+		if (openCreateMenu) {
+
+			createMenu.SetActive (true);
+			openCreateMenu = false;
+
+		} else {
+			createMenu.SetActive (false);
+			openCreateMenu = true;
 		}
 
 	}
