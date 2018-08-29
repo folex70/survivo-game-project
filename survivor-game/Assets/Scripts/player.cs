@@ -18,6 +18,8 @@ public class player : character {
 	public bool ableToPick;
 	public int chop;
 	public List<Item> Inventory = new List<Item> ();
+	public GameObject [] Slots;
+	public Sprite [] Sprites; //0 - fruit 1 - wood
 	
 	// Use this for initialization
 	void Start (){
@@ -52,7 +54,20 @@ public class player : character {
 			else if(food > 80 && life < 100){
 				life += 1;
 			}
-		}				
+		}
+		//load inventory
+		foreach (Item slot in Inventory) {
+			
+			print(slot.name);
+			if(slot.name == "fruit"){
+				Slots[slot.idItem].GetComponent<Image>().sprite = Sprites[0];
+			}
+			else if(slot.name == "wood"){
+				Slots[slot.idItem].GetComponent<Image>().sprite = Sprites[1];
+			}
+			
+			
+		}		
 	}
 	
 	private void GetInput(){
