@@ -6,8 +6,13 @@ public class UI : MonoBehaviour {
 
 	public bool openInvetory;
 	public bool openCreateMenu;
+	public bool openTentMenu;
+	public bool openCampFireMenu;
 
+	public GameObject InvetoryMenu;
 	public GameObject createMenu;
+	public GameObject tentMenu;
+	public GameObject campFireMenu;
 
 	// Use this for initialization
 	void Start () {
@@ -23,17 +28,18 @@ public class UI : MonoBehaviour {
 		
 		if (openInvetory) {
 
-			this.gameObject.SetActive (true);
+			InvetoryMenu.gameObject.SetActive (true);
 			openInvetory = false;
 
 		} else {
-			this.gameObject.SetActive (false);
+			InvetoryMenu.gameObject.SetActive (false);
 			createMenu.SetActive (false);
 			openCreateMenu = true;
 			openInvetory = true;
 		}
 
 	}
+	
 
 	public void Create(){
 
@@ -48,4 +54,34 @@ public class UI : MonoBehaviour {
 		}
 
 	}
+	
+	public void Tent(){
+	
+		if (openTentMenu) {
+
+			tentMenu.SetActive (true);
+			openTentMenu = false;
+
+		} else {
+			tentMenu.SetActive (false);
+			openTentMenu = true;
+		}
+
+	}
+	
+	public void CampFire(){
+
+		if (openCampFireMenu) {
+
+			campFireMenu.SetActive (true);
+			openCampFireMenu = false;
+
+		} else {
+			campFireMenu.SetActive (false);
+			openCampFireMenu = true;
+		}
+
+	}
+	
+	//fazer um menu generico que alimenta um frame apenas
 }

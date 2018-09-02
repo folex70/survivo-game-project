@@ -16,6 +16,11 @@ public class player : character {
 	public bool ableToChopTree;
 	public bool ableToMine;
 	public bool ableToPick;
+	public bool ableToOpenTentMenu;
+	public bool ableToOpenCampFireMenu;
+	//-------------------------------
+	public GameObject UIManager;
+	//-------------------------------
 	public int chop;
 	public List<Item> Inventory = new List<Item> ();
 	public GameObject [] Slots;
@@ -72,8 +77,7 @@ public class player : character {
 			//empty nunca cai aqui
 				Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 			}
-			
-			
+						
 		}		
 	}
 	
@@ -92,6 +96,13 @@ public class player : character {
 		if (Input.GetKey(KeyCode.D)){
 			direction += Vector2.right;
 		}
+		//if (Input.GetKey(KeyCode.I)){
+		//	UIManager.SendMessage ("Invetory");
+		//}
+		if(Input.GetButtonDown("i")){
+			
+			UIManager.SendMessage ("Invetory");	
+		}
 
 	}
 
@@ -109,16 +120,32 @@ public class player : character {
 				col.gameObject.SendMessage ("DamageMaterial");
 			}
 			ableToPick = false;
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = false;
 		} else if (col.gameObject.tag == "fruit" || col.gameObject.tag =="wood" || col.gameObject.tag == "woodPile") {
 			//pick fruit
 			ableToPick = true;
-		} else if (col.gameObject.tag == "tent" || col.gameObject.tag =="campFire" || col.gameObject.tag =="campfire"){
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = false;
+		} else if (col.gameObject.tag == "tent"){
 			ableToPick = false;
-		} else {
+			ableToOpenTentMenu = true;
+			ableToOpenCampFireMenu = false;
+		}
+		else if (col.gameObject.tag =="campFire" || col.gameObject.tag =="campfire"){
+			ableToPick = false;
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = true;
+		}		
+		else {
 			//@TODO corrigir essa parte, pois está pegando qq coisa!!
 			ableToPick = true;
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = false;
 		}
 
+	
+		
 		if(Input.GetButtonDown("Fire1")){
 			//print("pick item or action");
 
@@ -136,6 +163,14 @@ public class player : character {
 				} else {
 					print ("inventory full");
 				}
+			}
+			if(ableToOpenTentMenu){
+				
+				UIManager.SendMessage ("Tent");
+			}
+			if(ableToOpenCampFireMenu){
+				
+				UIManager.SendMessage ("CampFire");
 			}
 		}
 
