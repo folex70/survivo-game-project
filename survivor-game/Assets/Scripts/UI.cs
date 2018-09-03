@@ -83,11 +83,12 @@ public class UI : MonoBehaviour {
 			campFireMenu.SetActive (true);
 			openCampFireMenu = false;
 
-		} else {
-			campFireMenu.SetActive (false);
-			openCampFireMenu = true;
-		}
+		} 
+	}
 
+	public void closeCampFire(){
+		campFireMenu.SetActive (false);
+		openCampFireMenu = true;
 	}
 	
 	//fazer um menu generico que alimenta um frame apenas

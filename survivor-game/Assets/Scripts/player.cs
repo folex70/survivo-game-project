@@ -65,24 +65,43 @@ public class player : character {
 				life += 1;
 			}
 		}
+		//-------------------------------------------------------
+		LoadInventory();
+	}
+
+	public void LoadInventory(){
 		//load inventory
 		foreach (Item slot in Inventory) {
-			
+			//para não sobrepor imagens
+			Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+			print (Inventory.IndexOf(slot));
 			print("itens no inventorio: "+slot.name+""+slot.idItem);
 			if (slot.name == "fruit") {
-				Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [0];
+				//Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [0];
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [0];
 			} else if (slot.name == "wood_pile" || slot.name == "woodPile") {
-				Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [2];
+				//Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [2];
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [2];
 			} else if (slot.name == "wood") {
-				Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [1];
+				//Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [1];
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [1];
 			} else {
-			//empty nunca cai aqui
-				Slots [slot.idItem].GetComponent<Image> ().sprite = null;
-			}
-						
+				print("empty nunca cai aqui");
+				//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = null;
+			}						
 		}		
 	}
-	
+
+	public void ClearInventory(){
+		for (int i = 0; i < 9; i++)
+		{
+			if (Slots [i] != null) {
+				Slots[i].GetComponent<Image> ().sprite = null;
+			}
+		}
+	}
+
 	private void GetInput(){
 		direction = Vector2.zero;
 		
@@ -151,11 +170,8 @@ public class player : character {
 			ableToOpenCampFireMenu = false;
 		}
 
-	
-		
 		if(Input.GetButtonDown("Fire1")){
 			//print("pick item or action");
-
 			if (ableToChopTree) {
 				//print ("chopping tree");
 				chop = 1;
@@ -163,21 +179,19 @@ public class player : character {
 			if(ableToPick){
 				//print ("pick something");
 				//print ("inventory"+ Inventory.Count);
+				//Inventory.IndexOf(slot)
 				if (Inventory.Count < 9) {
 					Inventory.Add (new Item (Inventory.Count + 1, col.gameObject.tag));	
-					Inventory.Sort ();
+					//Inventory.Sort ();
 					col.gameObject.SendMessage ("DesactiveMaterial");
 				} else {
 					print ("inventory full");
 				}
 			}
-			if(ableToOpenTentMenu){
-				
-				UIManager.SendMessage ("Tent");
-				
+			if(ableToOpenTentMenu){				
+				UIManager.SendMessage ("Tent");				
 			}
-			if(ableToOpenCampFireMenu){
-				
+			if(ableToOpenCampFireMenu){				
 				UIManager.SendMessage ("CampFire");
 			}
 		}
@@ -185,9 +199,13 @@ public class player : character {
 	}
 
 	void OnCollisionExit2D(Collision2D col){
-		print (col.gameObject.tag);
+		//print (col.gameObject.tag);
 		ableToChopTree = false;
 		ableToPick = false;
+		ableToOpenTentMenu = false;
+		ableToOpenCampFireMenu = false;
+		UIManager.SendMessage ("closeTent");
+		UIManager.SendMessage ("closeCampFire");
 	}
 
 	//public void Create(string name, int prefabCode ,string material, int qtd){
@@ -208,8 +226,15 @@ public class player : character {
 			material = "woodPile";
 			prefabCode = 2;
 			qtd = 1;
+		} else if(name == "cookedFish") {
+			material = "fish";
+			prefabCode = 3;
+			qtd = 1;
+		} else if(name == "cookedMeat") {
+			material = "meat";
+			prefabCode = 4;
+			qtd = 1;
 		}
-
 		//--------------------------------------------------------------------
 		//count woods for create
 		int countInInvetory = 0;		
@@ -227,17 +252,20 @@ public class player : character {
 			int countRemovals = 0;
 			foreach (Item slot in Inventory.ToArray()) {
 				if (slot.name == material) {
-					Inventory.Remove (slot); 
-					Inventory.Sort ();
+					//Inventory.Sort ();
 					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+					//print(Inventory.IndexOf(slot)+1);
+					//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = null;
+					Inventory.Remove (slot); 
 					countRemovals++;
 					if (countRemovals >= qtd) {
+						ClearInventory ();
 						break;
 					}
 				}
 			}	
 		} else {
-			print("Not enough material. Needs: "+qtd);
+			print("Not enough material. Needs: "+qtd+" "+material);
 		}
 
 		//}
@@ -248,8 +276,7 @@ public class player : character {
 		print("recover "+recover);
 		usedTent = true;
 		life = life + recover;
-		if(life > 100){life = 100;}
-		
+		if(life > 100){life = 100;}		
 	}
 }
 
@@ -258,7 +285,6 @@ public class Item: IComparable<Item>{
 	public string 	name;
 
 	public Item(int newidItem, string newName){
-
 		idItem  = newidItem;
 		name 	= newName;	
 	}
@@ -271,7 +297,5 @@ public class Item: IComparable<Item>{
 			return other.idItem;
 		}
 			return this.idItem;
-
 	}
-
 }
