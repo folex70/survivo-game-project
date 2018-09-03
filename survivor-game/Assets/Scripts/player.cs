@@ -18,6 +18,7 @@ public class player : character {
 	public bool ableToPick;
 	public bool ableToOpenTentMenu;
 	public bool ableToOpenCampFireMenu;
+	public bool usedTent;
 	//-------------------------------
 	public GameObject UIManager;
 	//-------------------------------
@@ -34,6 +35,7 @@ public class player : character {
 		life = 100;
 		food = 100;
 		foodTime = 0;
+		usedTent = false;
 		base.Start();
 	}
 	
@@ -131,6 +133,11 @@ public class player : character {
 			ableToPick = false;
 			ableToOpenTentMenu = true;
 			ableToOpenCampFireMenu = false;
+			if(usedTent){
+					col.gameObject.SetActive (false);
+					usedTent = false;
+					UIManager.SendMessage ("closeTent");
+			}
 		}
 		else if (col.gameObject.tag =="campFire" || col.gameObject.tag =="campfire"){
 			ableToPick = false;
@@ -167,6 +174,7 @@ public class player : character {
 			if(ableToOpenTentMenu){
 				
 				UIManager.SendMessage ("Tent");
+				
 			}
 			if(ableToOpenCampFireMenu){
 				
@@ -220,6 +228,7 @@ public class player : character {
 			foreach (Item slot in Inventory.ToArray()) {
 				if (slot.name == material) {
 					Inventory.Remove (slot); 
+					Inventory.Sort ();
 					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 					countRemovals++;
 					if (countRemovals >= qtd) {
@@ -235,6 +244,13 @@ public class player : character {
 
 	}
 	//--------------------------------------------------------------------
+	public void rest(int recover){
+		print("recover "+recover);
+		usedTent = true;
+		life = life + recover;
+		if(life > 100){life = 100;}
+		
+	}
 }
 
 public class Item: IComparable<Item>{

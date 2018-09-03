@@ -62,11 +62,18 @@ public class UI : MonoBehaviour {
 			tentMenu.SetActive (true);
 			openTentMenu = false;
 
-		} else {
+		} 
+		//else {
+		//	tentMenu.SetActive (false);
+		//	openTentMenu = true;
+		//}
+
+	}
+	
+	public void closeTent(){
 			tentMenu.SetActive (false);
 			openTentMenu = true;
-		}
-
+		
 	}
 	
 	public void CampFire(){
