@@ -22,6 +22,8 @@ public class player : character {
 	//-------------------------------
 	public GameObject UIManager;
 	//-------------------------------
+	public int selectedItem;
+	//-------------------------------
 	public int chop;
 	public List<Item> Inventory = new List<Item> ();
 	public GameObject [] Slots;
@@ -124,7 +126,6 @@ public class player : character {
 			
 			UIManager.SendMessage ("Invetory");	
 		}
-
 	}
 
 	void OnCollisionEnter2D(Collision2D col){
@@ -175,8 +176,8 @@ public class player : character {
 			if (ableToChopTree) {
 				//print ("chopping tree");
 				chop = 1;
-			}
-			if(ableToPick){
+			} 
+			if (ableToPick) {
 				//print ("pick something");
 				//print ("inventory"+ Inventory.Count);
 				//Inventory.IndexOf(slot)
@@ -187,15 +188,14 @@ public class player : character {
 				} else {
 					print ("inventory full");
 				}
-			}
-			if(ableToOpenTentMenu){				
+			} 
+			if(ableToOpenTentMenu){
 				UIManager.SendMessage ("Tent");				
 			}
-			if(ableToOpenCampFireMenu){				
+			if(ableToOpenCampFireMenu){
 				UIManager.SendMessage ("CampFire");
 			}
 		}
-
 	}
 
 	void OnCollisionExit2D(Collision2D col){
@@ -252,10 +252,7 @@ public class player : character {
 			int countRemovals = 0;
 			foreach (Item slot in Inventory.ToArray()) {
 				if (slot.name == material) {
-					//Inventory.Sort ();
 					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
-					//print(Inventory.IndexOf(slot)+1);
-					//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = null;
 					Inventory.Remove (slot); 
 					countRemovals++;
 					if (countRemovals >= qtd) {
@@ -267,9 +264,13 @@ public class player : character {
 		} else {
 			print("Not enough material. Needs: "+qtd+" "+material);
 		}
-
 		//}
-
+	}
+	//--------------------------------------------------------------------
+	public void eat(int recover){
+		print("eat something, restores hp: "+recover);
+		food = food + recover;
+		if(food > 100){food = 100;}	
 	}
 	//--------------------------------------------------------------------
 	public void rest(int recover){
@@ -278,6 +279,23 @@ public class player : character {
 		life = life + recover;
 		if(life > 100){life = 100;}		
 	}
+	//--------------------------------------------------------------------
+	public void UseItem(int selectedItem){
+		foreach (Item slot in Inventory.ToArray()) {
+			if (Inventory.IndexOf (slot) + 1 == selectedItem){
+				print ("selecionei usar o item" + selectedItem + " econtrei o item" + Inventory [Inventory.IndexOf (slot)].name);
+				if(Inventory [Inventory.IndexOf (slot)].name == "fruit"){
+					eat (10);
+					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+					Inventory.Remove (slot); 
+				}
+				break;
+			} else {
+				print ("nenhum item aqui");
+			}
+		}
+	}
+	//--------------------------------------------------------------------
 }
 
 public class Item: IComparable<Item>{
