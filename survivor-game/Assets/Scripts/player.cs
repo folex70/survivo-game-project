@@ -75,7 +75,7 @@ public class player : character {
 		//load inventory
 		foreach (Item slot in Inventory) {
 			//para não sobrepor imagens
-			Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+			//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 			print (Inventory.IndexOf(slot));
 			print("itens no inventorio: "+slot.name+""+slot.idItem);
 			if (slot.name == "fruit") {
@@ -89,14 +89,13 @@ public class player : character {
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [1];
 			} else {
 				print("empty nunca cai aqui");
-				//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = null;
 			}						
 		}		
 	}
 
 	public void ClearInventory(){
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i <= 9; i++)
 		{
 			if (Slots [i] != null) {
 				Slots[i].GetComponent<Image> ().sprite = null;
@@ -252,7 +251,7 @@ public class player : character {
 			int countRemovals = 0;
 			foreach (Item slot in Inventory.ToArray()) {
 				if (slot.name == material) {
-					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+					//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 					Inventory.Remove (slot); 
 					countRemovals++;
 					if (countRemovals >= qtd) {
@@ -286,9 +285,9 @@ public class player : character {
 				print ("selecionei usar o item" + selectedItem + " econtrei o item" + Inventory [Inventory.IndexOf (slot)].name);
 				if(Inventory [Inventory.IndexOf (slot)].name == "fruit"){
 					eat (10);
-					Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 					Inventory.Remove (slot); 
 				}
+				ClearInventory ();
 				break;
 			} else {
 				print ("nenhum item aqui");
