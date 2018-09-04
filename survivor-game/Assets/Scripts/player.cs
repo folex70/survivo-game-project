@@ -75,22 +75,15 @@ public class player : character {
 		//load inventory
 		foreach (Item slot in Inventory) {
 			//para não sobrepor imagens
-			//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
 			print (Inventory.IndexOf(slot));
 			print("itens no inventorio: "+slot.name+""+slot.idItem);
 			if (slot.name == "fruit") {
-				//Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [0];
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [0];
 			} else if (slot.name == "wood_pile" || slot.name == "woodPile") {
-				//Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [2];
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [2];
 			} else if (slot.name == "wood") {
-				//Slots [slot.idItem].GetComponent<Image> ().sprite = Sprites [1];
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [1];
-			} else {
-				print("empty nunca cai aqui");
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = null;
-			}						
+			} 						
 		}		
 	}
 
