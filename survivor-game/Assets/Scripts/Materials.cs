@@ -61,7 +61,7 @@ public class Materials : MonoBehaviour {
 
 			materialTime = 0;
 		}
-		if (seasonChangeTime > 300) {
+		if (seasonChangeTime > 100) {
 			changeTreeSprite (Gaia.treeSeasons);
 			seasonChangeTime = 0;
 		}

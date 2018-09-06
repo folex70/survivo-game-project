@@ -8,11 +8,13 @@ public class UI : MonoBehaviour {
 	public bool openCreateMenu;
 	public bool openTentMenu;
 	public bool openCampFireMenu;
+	public bool openFishingMenu;
 
 	public GameObject InvetoryMenu;
 	public GameObject createMenu;
 	public GameObject tentMenu;
 	public GameObject campFireMenu;
+	public GameObject fishingMenu;
 
 	// Use this for initialization
 	void Start () {
@@ -79,10 +81,8 @@ public class UI : MonoBehaviour {
 	public void CampFire(){
 
 		if (openCampFireMenu) {
-
 			campFireMenu.SetActive (true);
 			openCampFireMenu = false;
-
 		} 
 	}
 
@@ -90,6 +90,18 @@ public class UI : MonoBehaviour {
 		campFireMenu.SetActive (false);
 		openCampFireMenu = true;
 	}
-	
+
+	public void FishingMenu(){
+
+		if (openFishingMenu) {
+			fishingMenu.SetActive (true);
+			openFishingMenu = false;
+		} 
+	}
+
+	public void closeFishingMenu(){
+		fishingMenu.SetActive (false);
+		openFishingMenu = true;
+	}
 	//fazer um menu generico que alimenta um frame apenas
 }

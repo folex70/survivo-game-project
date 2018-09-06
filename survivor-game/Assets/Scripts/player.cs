@@ -18,6 +18,7 @@ public class player : character {
 	public bool ableToPick;
 	public bool ableToOpenTentMenu;
 	public bool ableToOpenCampFireMenu;
+	public bool ableToFishing;
 	public bool usedTent;
 	//-------------------------------
 	public GameObject UIManager;
@@ -27,7 +28,7 @@ public class player : character {
 	public int chop;
 	public List<Item> Inventory = new List<Item> ();
 	public GameObject [] Slots;
-	public Sprite [] Sprites; //0 - fruit 1 - wood
+	public Sprite [] Sprites; //0 - fruit 1 - wood 2 - woodpile 3 - fish 4 - string 5 - rod 6 - grass
 	//------------------------------- 
 	//materials for create
 	public GameObject [] Prefabs;//woodPilePrefab
@@ -83,7 +84,19 @@ public class player : character {
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [2];
 			} else if (slot.name == "wood") {
 				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [1];
-			} 						
+			}
+			else if (slot.name == "fish") {
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [3];
+			}
+			else if (slot.name == "string") {
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [4];
+			}
+			else if (slot.name == "rod") {
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [5];
+			}
+			else if (slot.name == "grass") {
+				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+			} 
 		}		
 	}
 
@@ -136,15 +149,19 @@ public class player : character {
 			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
-		} else if (col.gameObject.tag == "fruit" || col.gameObject.tag =="wood" || col.gameObject.tag == "woodPile") {
+			ableToFishing = false;
+		} else if (	col.gameObject.tag == "fruit" 	|| col.gameObject.tag =="wood" 		|| col.gameObject.tag == "woodPile" ||  
+					col.gameObject.tag == "string" 	|| col.gameObject.tag == "grass" 	||  col.gameObject.tag == "rod" 	|| col.gameObject.tag == "fish") {
 			//pick fruit
 			ableToPick = true;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
+			ableToFishing = false;
 		} else if (col.gameObject.tag == "tent"){
 			ableToPick = false;
 			ableToOpenTentMenu = true;
 			ableToOpenCampFireMenu = false;
+			ableToFishing = false;
 			if(usedTent){
 					col.gameObject.SetActive (false);
 					usedTent = false;
@@ -155,12 +172,20 @@ public class player : character {
 			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = true;
-		}		
-		else {
-			//@TODO corrigir essa parte, pois está pegando qq coisa!!
-			ableToPick = true;
+			ableToFishing = false;
+		}
+		else if(col.gameObject.tag =="water" ){
+			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
+			ableToFishing = true;
+		}
+		else {
+			//@TODO corrigir essa parte, pois está pegando qq coisa!!
+			ableToPick = false;
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = false;
+			ableToFishing = false;
 		}
 
 		if(Input.GetButtonDown("Fire1")){
@@ -187,6 +212,9 @@ public class player : character {
 			if(ableToOpenCampFireMenu){
 				UIManager.SendMessage ("CampFire");
 			}
+			if(ableToFishing){
+				UIManager.SendMessage ("FishingMenu");
+			}
 		}
 	}
 
@@ -196,8 +224,10 @@ public class player : character {
 		ableToPick = false;
 		ableToOpenTentMenu = false;
 		ableToOpenCampFireMenu = false;
+		ableToFishing = false;
 		UIManager.SendMessage ("closeTent");
 		UIManager.SendMessage ("closeCampFire");
+		UIManager.SendMessage ("closeFishingMenu");
 	}
 
 	//public void Create(string name, int prefabCode ,string material, int qtd){
@@ -205,7 +235,6 @@ public class player : character {
 		string material = "";
 		int prefabCode = 0; //0 - wood Pile 1- tent 2 -campfire
 		int qtd = 0;
-
 		if (name == "woodPile") {
 			material = "wood";
 			prefabCode = 0;
@@ -218,13 +247,30 @@ public class player : character {
 			material = "woodPile";
 			prefabCode = 2;
 			qtd = 1;
-		} else if(name == "cookedFish") {
-			material = "fish";
+		} 
+		else if(name == "fish") {
+			material = "rod";
 			prefabCode = 3;
 			qtd = 1;
-		} else if(name == "cookedMeat") {
-			material = "meat";
+		}
+		else if(name == "string") {
+			material = "grass";
 			prefabCode = 4;
+			qtd = 3;
+		}
+		else if(name == "rod") {
+			material = "wood";
+			prefabCode = 5;
+			qtd = 1;
+		}
+		else if(name == "cookedFish") {
+			material = "fish";
+			prefabCode = 6;
+			qtd = 1;
+		} 
+		else if(name == "cookedMeat") {
+			material = "meat";
+			prefabCode = 7;
 			qtd = 1;
 		}
 		//--------------------------------------------------------------------

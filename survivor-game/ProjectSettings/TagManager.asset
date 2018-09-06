@@ -23,6 +23,9 @@ TagManager:
   - water
   - inventory
   - woodPile
+  - rod
+  - wineString
+  - string
   layers:
   - Default
   - TransparentFX

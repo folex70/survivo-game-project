@@ -64,7 +64,7 @@ public class Gaia : MonoBehaviour {
 
 	public void seasonControll(){
 		//if (gaiaTime > 6000) {
-		if (gaiaTime>300) {
+		if (gaiaTime>100) {
 			print ("troca estação");
 			seasons ++;
 
