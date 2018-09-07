@@ -26,6 +26,7 @@ TagManager:
   - rod
   - wineString
   - string
+  - river
   layers:
   - Default
   - TransparentFX

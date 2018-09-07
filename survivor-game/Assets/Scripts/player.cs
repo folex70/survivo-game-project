@@ -11,7 +11,9 @@ public class player : character {
 	public Scrollbar barFood;
 	public float life;
 	public float food;
-	public float globalTime; 
+	public string status; //starved - loose 2 hp per 10 seconds; freeze - loose 1 hp per 2 seconds, stay close to fire; normal; good - cures 1 hp per 10 seconds
+	//-------------------------------
+	public float statusTime; 
 	public float foodTime; 
 	public bool ableToChopTree;
 	public bool ableToMine;
@@ -20,6 +22,7 @@ public class player : character {
 	public bool ableToOpenCampFireMenu;
 	public bool ableToFishing;
 	public bool usedTent;
+	public bool nextAFire;
 	//-------------------------------
 	public GameObject UIManager;
 	//-------------------------------
@@ -39,7 +42,9 @@ public class player : character {
 		food = 100;
 		foodTime = 0;
 		usedTent = false;
+		nextAFire = false;
 		base.Start();
+		status = "good";
 	}
 	
 	// Update is called once per frame
@@ -47,29 +52,68 @@ public class player : character {
 		GetInput();
 		base.Update(); //load superclass update method
 		foodTime += Time.deltaTime;
-		
+		statusTime += Time.deltaTime;
+		//-------------------------------------------------------
 		//status bar update
 		barLife.size = life/100;
 		barFood.size = food/100;
-		
+		//-------------------------------------------------------
 		//hungry count
 		if(foodTime > 10){
 			if(food > 0){
 				food -= 5;
+				status = "normal";
 			}
 			foodTime = 0;
 			//if no food, decreaces health per time
 			if(food < 1){
-				life -= 2;
+				status = "starved";
+				//life -= 2;
 				//if life = 0 {gameOver();}
 			}
 			//if food > 80% cure player
 			else if(food > 80 && life < 100){
-				life += 1;
+				status = "good";
+				//life += 1;
 			}
 		}
 		//-------------------------------------------------------
+		//freeze check
+		if(Gaia.treeSeasons == 4 && !nextAFire){
+			status = "freeze";
+		}
+		//-------------------------------------------------------
+		if (statusTime > 10){
+			statusCheck(status);
+			statusTime = 0;
+		}
+		//-------------------------------------------------------
 		LoadInventory();
+	}
+	
+	public void statusCheck(string s){
+		print (s);
+		switch (s) {
+
+			case "good":
+				life = life + 1; 
+			break;
+			case "freeze":
+				life = life - 10;
+			break;
+
+			case "normal":
+				
+			break;
+			
+			case "dead":
+				//call game over
+			break;
+
+			case "starved":
+				life = life - 2;
+			break;			
+		}
 	}
 
 	public void LoadInventory(){
@@ -172,6 +216,7 @@ public class player : character {
 			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = true;
+			nextAFire = true;
 			ableToFishing = false;
 		}
 		else if(col.gameObject.tag =="water" ){
@@ -225,6 +270,7 @@ public class player : character {
 		ableToOpenTentMenu = false;
 		ableToOpenCampFireMenu = false;
 		ableToFishing = false;
+		nextAFire = false;
 		UIManager.SendMessage ("closeTent");
 		UIManager.SendMessage ("closeCampFire");
 		UIManager.SendMessage ("closeFishingMenu");
@@ -233,8 +279,10 @@ public class player : character {
 	//public void Create(string name, int prefabCode ,string material, int qtd){
 	public void Create(string name){	
 		string material = "";
+		string material2 = "";
 		int prefabCode = 0; //0 - wood Pile 1- tent 2 -campfire
 		int qtd = 0;
+		int qtd2 = 0;
 		if (name == "woodPile") {
 			material = "wood";
 			prefabCode = 0;
@@ -259,9 +307,11 @@ public class player : character {
 			qtd = 3;
 		}
 		else if(name == "rod") {
-			material = "wood";
+			material  = "wood";
+			material2 = "string";
 			prefabCode = 5;
-			qtd = 1;
+			qtd  = 1;
+			qtd2 = 1;
 		}
 		else if(name == "cookedFish") {
 			material = "fish";
@@ -274,9 +324,10 @@ public class player : character {
 			qtd = 1;
 		}
 		//--------------------------------------------------------------------
-		//count woods for create
+		//count materials for create
 		int countInInvetory = 0;		
-		foreach (Item slot in Inventory.ToArray()) {
+		int countInInvetory2 = 0;		
+		foreach (Item slot in Inventory.ToArray()){
 			print (material);
 			if(slot.name == material){
 				countInInvetory++;
@@ -284,10 +335,18 @@ public class player : character {
 			}
 			print ("i have "+countInInvetory+" nubember of" +material);
 		}
-			//requeres "qtd" "material" for create a woodPile
-		if (countInInvetory >= qtd) {
+		if(qtd2 >0){
+			foreach (Item slot in Inventory.ToArray()){
+				if(slot.name == material2){
+					countInInvetory2++;
+				}
+			}
+		}
+		//requeres "qtd" "material" for create a "name" (name of material)
+		if (countInInvetory >= qtd && countInInvetory2 >= qtd2) {
 			Instantiate (Prefabs [prefabCode], new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y, 0), Quaternion.identity);	
 			int countRemovals = 0;
+			int countRemovals2 = 0;
 			foreach (Item slot in Inventory.ToArray()) {
 				if (slot.name == material) {
 					//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
@@ -298,9 +357,20 @@ public class player : character {
 						break;
 					}
 				}
-			}	
+			}
+			foreach (Item slot in Inventory.ToArray()) {
+				if (slot.name == material2) {
+					//Slots [slot.idItem].GetComponent<Image> ().sprite = null;
+					Inventory.Remove (slot); 
+					countRemovals2++;
+					if (countRemovals2 >= qtd) {
+						ClearInventory ();
+						break;
+					}
+				}
+			}				
 		} else {
-			print("Not enough material. Needs: "+qtd+" "+material);
+			print("Not enough material. Needs: "+qtd+" "+material+" and "+qtd2+" material "+material2);
 		}
 		//}
 	}
@@ -323,9 +393,25 @@ public class player : character {
 			if (Inventory.IndexOf (slot) + 1 == selectedItem){
 				print ("selecionei usar o item" + selectedItem + " econtrei o item" + Inventory [Inventory.IndexOf (slot)].name);
 				if(Inventory [Inventory.IndexOf (slot)].name == "fruit"){
-					eat (10);
+					eat (8);
 					Inventory.Remove (slot); 
 				}
+				if(Inventory [Inventory.IndexOf (slot)].name == "fish"){
+					eat (15);
+					Inventory.Remove (slot); 
+				}
+				if(Inventory [Inventory.IndexOf (slot)].name == "meat"){
+					eat (25);
+					Inventory.Remove (slot); 
+				}
+				if(Inventory [Inventory.IndexOf (slot)].name == "cookedFish"){
+					eat (50);
+					Inventory.Remove (slot); 
+				}
+				if(Inventory [Inventory.IndexOf (slot)].name == "cookedMeat"){
+					eat (75);
+					Inventory.Remove (slot); 
+				}							
 				ClearInventory ();
 				break;
 			} else {
