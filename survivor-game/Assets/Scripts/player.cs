@@ -11,6 +11,7 @@ public class player : character {
 	public Scrollbar barFood;
 	public float life;
 	public float food;
+	public int playerDamage;
 	public string status; //starved - loose 2 hp per 10 seconds; freeze - loose 1 hp per 2 seconds, stay close to fire; normal; good - cures 1 hp per 10 seconds
 	public SpriteRenderer mySprite;
 	//-------------------------------
@@ -22,6 +23,7 @@ public class player : character {
 	public bool ableToOpenTentMenu;
 	public bool ableToOpenCampFireMenu;
 	public bool ableToFishing;
+	public bool ableToAttack;
 	public bool usedTent;
 	public bool nextAFire;
 	public bool poisoned;
@@ -37,11 +39,12 @@ public class player : character {
 	//------------------------------- 
 	//materials for create
 	public GameObject [] Prefabs;//woodPilePrefab
-	
+	//-------------------------------
 	// Use this for initialization
 	void Start (){
 		life = 100;
 		food = 100;
+		playerDamage = 5;
 		foodTime = 0;
 		usedTent = false;
 		nextAFire = false;
@@ -137,29 +140,36 @@ public class player : character {
 			print (Inventory.IndexOf(slot));
 			print("itens no inventorio: "+slot.name+""+slot.idItem);
 			if (slot.name == "fruit") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [0];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [0];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [0];
 			} else if (slot.name == "wood_pile" || slot.name == "woodPile") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [2];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [2];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [2];
 			} else if (slot.name == "wood") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [1];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [1];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [1];
 			}
 			else if (slot.name == "fish") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [3];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [3];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [3];
 			}
 			else if (slot.name == "string") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [4];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [4];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [4];
 			}
 			else if (slot.name == "rod") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [5];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [5];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [5];
 			}
 			else if (slot.name == "grass") {
-				Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [6];
 			} 
 		}		
 	}
 
 	public void ClearInventory(){
-		for (int i = 0; i <= 9; i++)
+		for (int i = 0; i <= 8; i++)
 		{
 			if (Slots [i] != null) {
 				Slots[i].GetComponent<Image> ().sprite = null;
@@ -185,8 +195,7 @@ public class player : character {
 		//if (Input.GetKey(KeyCode.I)){
 		//	UIManager.SendMessage ("Invetory");
 		//}
-		if(Input.GetButtonDown("i")){
-			
+		if(Input.GetButtonDown("i")){			
 			UIManager.SendMessage ("Invetory");	
 		}
 	}
@@ -199,7 +208,6 @@ public class player : character {
 		
 		if (col.gameObject.tag == "tree") {
 			ableToChopTree = true;
-
 			if (chop > 0) {
 				chop = 0;
 				col.gameObject.SendMessage ("DamageMaterial");
@@ -208,36 +216,45 @@ public class player : character {
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
 			ableToFishing = false;
-		} else if (	col.gameObject.tag == "fruit" 	|| col.gameObject.tag =="wood" 		|| col.gameObject.tag == "woodPile" ||  
-					col.gameObject.tag == "string" 	|| col.gameObject.tag == "grass" 	||  col.gameObject.tag == "rod" 	|| col.gameObject.tag == "fish") {
+			ableToAttack = false;
+		} else if (col.gameObject.tag == "fruit" || col.gameObject.tag == "wood" || col.gameObject.tag == "woodPile" ||
+		           col.gameObject.tag == "string" || col.gameObject.tag == "grass" || col.gameObject.tag == "rod" || col.gameObject.tag == "fish") {
 			//pick fruit
 			ableToPick = true;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
 			ableToFishing = false;
-		} else if (col.gameObject.tag == "tent"){
+			ableToAttack = false;
+		} else if (col.gameObject.tag == "tent") {
 			ableToPick = false;
 			ableToOpenTentMenu = true;
 			ableToOpenCampFireMenu = false;
 			ableToFishing = false;
-			if(usedTent){
-					col.gameObject.SetActive (false);
-					usedTent = false;
-					UIManager.SendMessage ("closeTent");
+			ableToAttack = false;
+			if (usedTent) {
+				col.gameObject.SetActive (false);
+				usedTent = false;
+				UIManager.SendMessage ("closeTent");
 			}
-		}
-		else if (col.gameObject.tag =="campFire" || col.gameObject.tag =="campfire"){
+		} else if (col.gameObject.tag == "campFire" || col.gameObject.tag == "campfire") {
 			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = true;
 			nextAFire = true;
 			ableToFishing = false;
-		}
-		else if(col.gameObject.tag =="water" ){
+			ableToAttack = false;
+		} else if (col.gameObject.tag == "water") {
 			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
 			ableToFishing = true;
+			ableToAttack = false;
+		} else if (col.gameObject.tag == "snake") {
+			ableToPick = false;
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = false;
+			ableToFishing = false;
+			ableToAttack = true;
 		}
 		else {
 			//@TODO corrigir essa parte, pois está pegando qq coisa!!
@@ -245,21 +262,17 @@ public class player : character {
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
 			ableToFishing = false;
+			ableToAttack = false;
 		}
 
 		if(Input.GetButtonDown("Fire1")){
-			//print("pick item or action");
 			if (ableToChopTree) {
-				//print ("chopping tree");
 				chop = 1;
 			} 
 			if (ableToPick) {
-				//print ("pick something");
-				//print ("inventory"+ Inventory.Count);
-				//Inventory.IndexOf(slot)
 				if (Inventory.Count < 9) {
-					Inventory.Add (new Item (Inventory.Count + 1, col.gameObject.tag));	
-					//Inventory.Sort ();
+					//Inventory.Add (new Item (Inventory.Count + 1, col.gameObject.tag));	
+					Inventory.Add (new Item (Inventory.Count, col.gameObject.tag));	
 					col.gameObject.SendMessage ("DesactiveMaterial");
 				} else {
 					print ("inventory full");
@@ -273,6 +286,9 @@ public class player : character {
 			}
 			if(ableToFishing){
 				UIManager.SendMessage ("FishingMenu");
+			}
+			if(ableToAttack){
+				col.gameObject.SendMessage ("damage",playerDamage);
 			}
 		}
 	}
@@ -411,38 +427,39 @@ public class player : character {
 	}
 	//--------------------------------------------------------------------
 	public void UseItem(int selectedItem){
-		foreach (Item slot in Inventory.ToArray()) {
-			if (Inventory.IndexOf (slot) + 1 == selectedItem){
-				print ("selecionei usar o item" + selectedItem + " econtrei o item" + Inventory [Inventory.IndexOf (slot)].name);
+		foreach (Item slot in Inventory.ToArray()){
+			//if (Inventory.IndexOf (slot) + 1 == selectedItem){
+			if (Inventory.IndexOf (slot) == selectedItem){
+				print ("selecionei usar o item" + selectedItem + " econtrei o item" + Inventory [Inventory.IndexOf (slot)].name+" item de index "+Inventory.IndexOf (slot));
 				if(Inventory [Inventory.IndexOf (slot)].name == "fruit"){
 					eat (8);
 					Inventory.Remove (slot); 
-				}
-				if(Inventory [Inventory.IndexOf (slot)].name == "fish"){
+				}else if(Inventory [Inventory.IndexOf (slot)].name == "fish"){
 					eat (15);
 					Inventory.Remove (slot); 
 				}
-				if(Inventory [Inventory.IndexOf (slot)].name == "meat"){
+				else if(Inventory [Inventory.IndexOf (slot)].name == "meat"){
 					eat (25);
 					Inventory.Remove (slot); 
 				}
-				if(Inventory [Inventory.IndexOf (slot)].name == "cookedFish"){
+				else if(Inventory [Inventory.IndexOf (slot)].name == "cookedFish"){
 					eat (50);
 					Inventory.Remove (slot); 
 				}
-				if(Inventory [Inventory.IndexOf (slot)].name == "cookedMeat"){
+				else if(Inventory [Inventory.IndexOf (slot)].name == "cookedMeat"){
 					eat (75);
 					Inventory.Remove (slot); 
 				}
-				if(Inventory [Inventory.IndexOf (slot)].name == "antidote"){
+				else if(Inventory [Inventory.IndexOf (slot)].name == "antidote"){
 					poisoned = false;
-				}				
+				}		
 				ClearInventory ();
 				break;
 			} else {
 				print ("nenhum item aqui");
 			}
 		}
+		ClearInventory ();
 	}
 	//--------------------------------------------------------------------
 }

@@ -35,6 +35,10 @@ public class snake : MonoBehaviour {
 		if(!attacking){
 			move(rand);
 		}		
+
+		if(hp <= 0){
+			gameObject.SetActive (false);	
+		}
 	}
 	
 	public void move(int dir){
@@ -62,6 +66,10 @@ public class snake : MonoBehaviour {
 			break;
 		}
 		
+	}
+
+	public void damage(int d){
+		hp = hp - d;
 	}
 	
 	void OnCollisionStay2D(Collision2D col){
