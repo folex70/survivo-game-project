@@ -12,6 +12,7 @@ public class player : character {
 	public float life;
 	public float food;
 	public string status; //starved - loose 2 hp per 10 seconds; freeze - loose 1 hp per 2 seconds, stay close to fire; normal; good - cures 1 hp per 10 seconds
+	public SpriteRenderer mySprite;
 	//-------------------------------
 	public float statusTime; 
 	public float foodTime; 
@@ -23,6 +24,7 @@ public class player : character {
 	public bool ableToFishing;
 	public bool usedTent;
 	public bool nextAFire;
+	public bool poisoned;
 	//-------------------------------
 	public GameObject UIManager;
 	//-------------------------------
@@ -78,9 +80,17 @@ public class player : character {
 			}
 		}
 		//-------------------------------------------------------
+		mySprite.color = new Color(1,1,1,1);
+		//-------------------------------------------------------
 		//freeze check
 		if(Gaia.treeSeasons == 4 && !nextAFire){
+			mySprite.color = new Color(0.4392157f,0.7843137f,1f,1f);
 			status = "freeze";
+		}
+		//poison check
+		if(poisoned){
+			mySprite.color = new Color(16,0,16);
+			status = "poison";
 		}
 		//-------------------------------------------------------
 		if (statusTime > 10){
@@ -103,7 +113,7 @@ public class player : character {
 			break;
 
 			case "normal":
-				
+
 			break;
 			
 			case "dead":
@@ -112,7 +122,11 @@ public class player : character {
 
 			case "starved":
 				life = life - 2;
-			break;			
+			break;		
+
+			case "poison":
+				life = life - 5;
+			break;				
 		}
 	}
 
@@ -388,6 +402,14 @@ public class player : character {
 		if(life > 100){life = 100;}		
 	}
 	//--------------------------------------------------------------------
+	public void snakeDamage(){
+		life = life - 10;
+		int randPoison = UnityEngine.Random.Range (1,10);
+		if(randPoison == 5){
+			poisoned = true;
+		}
+	}
+	//--------------------------------------------------------------------
 	public void UseItem(int selectedItem){
 		foreach (Item slot in Inventory.ToArray()) {
 			if (Inventory.IndexOf (slot) + 1 == selectedItem){
@@ -411,7 +433,10 @@ public class player : character {
 				if(Inventory [Inventory.IndexOf (slot)].name == "cookedMeat"){
 					eat (75);
 					Inventory.Remove (slot); 
-				}							
+				}
+				if(Inventory [Inventory.IndexOf (slot)].name == "antidote"){
+					poisoned = false;
+				}				
 				ClearInventory ();
 				break;
 			} else {
