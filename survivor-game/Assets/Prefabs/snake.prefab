@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 30
+  myDamage: 0
   speed: 3
   rand: 0
   snakeTime: 0
@@ -127,6 +128,9 @@ MonoBehaviour:
   attacking: 0
   snakeAnim: {fileID: 95865954646358966}
   player: {fileID: 0}
+  Drops:
+  - {fileID: 1933717081866618, guid: 6f5c0313e08c40147b34f702f023b04f, type: 2}
+  - {fileID: 1877246868758012, guid: edccf3a2bcec7b44c9b60c2651a5d748, type: 2}
 --- !u!212 &212764004076515146
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -5,6 +5,7 @@ using UnityEngine;
 public class snake : MonoBehaviour {
 
 	public int hp;
+	public int myDamage;
 	public float speed;
 	public int rand;
 	public float snakeTime;
@@ -13,11 +14,13 @@ public class snake : MonoBehaviour {
 	public bool attacking;
 	public Animator snakeAnim;
 	public GameObject player;
+	public GameObject[] Drops;
 	
 	// Use this for initialization
 	void Start () {
 		rand = Random.Range(1,4);
 		speed =2f;
+		myDamage = 10;
 		hp = 30;
 		attacking = false;
 	}
@@ -37,12 +40,19 @@ public class snake : MonoBehaviour {
 		}		
 
 		if(hp <= 0){
+			int r = Random.Range (1, 3);
+			if (r == 2) {
+				Instantiate (Drops [0], new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y, 0), Quaternion.identity);		
+			}
+			int r2 = Random.Range (1, 10);
+			if (r == 5) {
+				Instantiate (Drops [1], new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y, 0), Quaternion.identity);		
+			}
 			gameObject.SetActive (false);	
 		}
 	}
 	
-	public void move(int dir){
-		
+	public void move(int dir){		
 		switch(dir){
 			case 1 :
 				transform.Translate (Vector2.left * speed * Time.deltaTime);
@@ -64,27 +74,23 @@ public class snake : MonoBehaviour {
 			default :
 				//transform.Translate (Vector2.down * speed * Time.deltaTime);
 			break;
-		}
-		
+		}		
 	}
 
 	public void damage(int d){
 		hp = hp - d;
 	}
 	
-	void OnCollisionStay2D(Collision2D col){
-		
+	void OnCollisionStay2D(Collision2D col){		
 		if (col.gameObject.tag == "Player") {
 			print("atacar o  player!");
 			snakeAnim.Play ("attack");
 			attacking = true;
-			if(snakeTimeAttack > 2){
-				
-				player.SendMessage ("snakeDamage");				
+			if(snakeTimeAttack > 2){				
+				player.SendMessage ("snakeDamage",myDamage);				
 				snakeTimeAttack = 0;
 			}			
-		}
-		
+		}		
 	}
 	
 	void OnCollisionExit2D(Collision2D col){

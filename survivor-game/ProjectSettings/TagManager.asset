@@ -28,6 +28,8 @@ TagManager:
   - string
   - river
   - snake
+  - antidote
+  - poison
   layers:
   - Default
   - TransparentFX

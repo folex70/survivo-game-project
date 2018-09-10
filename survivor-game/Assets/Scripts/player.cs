@@ -165,6 +165,14 @@ public class player : character {
 				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
 				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [6];
 			} 
+			else if (slot.name == "antidote") {
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [7];
+			} 
+			else if (slot.name == "poison") {
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [8];
+			} 
 		}		
 	}
 
@@ -218,7 +226,8 @@ public class player : character {
 			ableToFishing = false;
 			ableToAttack = false;
 		} else if (col.gameObject.tag == "fruit" || col.gameObject.tag == "wood" || col.gameObject.tag == "woodPile" ||
-		           col.gameObject.tag == "string" || col.gameObject.tag == "grass" || col.gameObject.tag == "rod" || col.gameObject.tag == "fish") {
+		           col.gameObject.tag == "string" || col.gameObject.tag == "grass" || col.gameObject.tag == "rod" || col.gameObject.tag == "fish" ||
+				   col.gameObject.tag == "antidote" || col.gameObject.tag == "poison") {
 			//pick fruit
 			ableToPick = true;
 			ableToOpenTentMenu = false;
@@ -418,8 +427,8 @@ public class player : character {
 		if(life > 100){life = 100;}		
 	}
 	//--------------------------------------------------------------------
-	public void snakeDamage(){
-		life = life - 10;
+	public void snakeDamage(int d){
+		life = life - d;
 		int randPoison = UnityEngine.Random.Range (1,10);
 		if(randPoison == 5){
 			poisoned = true;
@@ -452,6 +461,7 @@ public class player : character {
 				}
 				else if(Inventory [Inventory.IndexOf (slot)].name == "antidote"){
 					poisoned = false;
+					Inventory.Remove (slot); 
 				}		
 				ClearInventory ();
 				break;
