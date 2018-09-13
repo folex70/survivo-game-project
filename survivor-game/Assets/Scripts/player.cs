@@ -172,6 +172,14 @@ public class player : character {
 			else if (slot.name == "poison") {
 				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
 				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [8];
+			}
+			else if (slot.name == "cookedFish") {
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [9];
+			} 
+			else if (slot.name == "cookedMeat") {
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [10];
 			} 
 		}		
 	}
@@ -225,9 +233,9 @@ public class player : character {
 			ableToOpenCampFireMenu = false;
 			ableToFishing = false;
 			ableToAttack = false;
-		} else if (col.gameObject.tag == "fruit" || col.gameObject.tag == "wood" || col.gameObject.tag == "woodPile" ||
-		           col.gameObject.tag == "string" || col.gameObject.tag == "grass" || col.gameObject.tag == "rod" || col.gameObject.tag == "fish" ||
-				   col.gameObject.tag == "antidote" || col.gameObject.tag == "poison") {
+		} else if (col.gameObject.tag == "fruit" 	|| col.gameObject.tag == "wood" 	|| col.gameObject.tag == "woodPile" 	||
+		           col.gameObject.tag == "string" 	|| col.gameObject.tag == "grass" 	|| col.gameObject.tag == "rod" 			|| col.gameObject.tag == "fish" ||
+				   col.gameObject.tag == "antidote" || col.gameObject.tag == "poison" 	|| col.gameObject.tag == "cookedFish" 	|| col.gameObject.tag == "cookedMeat" ) {
 			//pick fruit
 			ableToPick = true;
 			ableToOpenTentMenu = false;

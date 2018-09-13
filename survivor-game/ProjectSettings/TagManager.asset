@@ -30,6 +30,8 @@ TagManager:
   - snake
   - antidote
   - poison
+  - cookedFish
+  - cookedMeat
   layers:
   - Default
   - TransparentFX
