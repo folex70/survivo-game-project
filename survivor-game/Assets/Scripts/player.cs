@@ -105,7 +105,7 @@ public class player : character {
 			status = "poison";
 		}
 		//dead check
-		if(life >= 0){
+		if(life <= 0){
 			status = "dead";
 		}
 		//-------------------------------------------------------
