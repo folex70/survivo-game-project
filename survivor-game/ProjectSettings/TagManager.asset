@@ -32,6 +32,10 @@ TagManager:
   - poison
   - cookedFish
   - cookedMeat
+  - r_limit
+  - l_limit
+  - bot_limit
+  - top_limit
   layers:
   - Default
   - TransparentFX

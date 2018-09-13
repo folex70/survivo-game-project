@@ -15,6 +15,11 @@ public class player : character {
 	public string status; //starved - loose 2 hp per 10 seconds; freeze - loose 1 hp per 2 seconds, stay close to fire; normal; good - cures 1 hp per 10 seconds
 	public SpriteRenderer mySprite;
 	//-------------------------------
+	public bool rightLimit;
+	public bool leftLimit;
+	public bool topLimit;
+	public bool botLimit;
+	//-------------------------------
 	public float statusTime; 
 	public float foodTime; 
 	public bool ableToChopTree;
@@ -50,6 +55,10 @@ public class player : character {
 		nextAFire = false;
 		base.Start();
 		status = "good";
+		rightLimit	= false;
+		leftLimit	= false;
+		topLimit	= false;
+		botLimit	= false;
 	}
 	
 	// Update is called once per frame
@@ -95,6 +104,10 @@ public class player : character {
 			mySprite.color = new Color(16,0,16);
 			status = "poison";
 		}
+		//dead check
+		if(life >= 0){
+			status = "dead";
+		}
 		//-------------------------------------------------------
 		if (statusTime > 10){
 			statusCheck(status);
@@ -121,6 +134,7 @@ public class player : character {
 			
 			case "dead":
 				//call game over
+				gameOver();
 			break;
 
 			case "starved":
@@ -131,6 +145,10 @@ public class player : character {
 				life = life - 5;
 			break;				
 		}
+	}
+
+	public void gameOver(){
+		SceneManager.LoadScene("Scene0"); 
 	}
 
 	public void LoadInventory(){
@@ -196,21 +214,18 @@ public class player : character {
 	private void GetInput(){
 		direction = Vector2.zero;
 		
-		if (Input.GetKey(KeyCode.W)){
+		if (Input.GetKey(KeyCode.W) && !topLimit){
 			direction += Vector2.up;
 		}
-		if (Input.GetKey(KeyCode.A)){
+		if (Input.GetKey(KeyCode.A) && !leftLimit){
 			direction += Vector2.left;
 		}
-		if (Input.GetKey(KeyCode.S)){
+		if (Input.GetKey(KeyCode.S) && !botLimit){
 			direction += Vector2.down;
 		}
-		if (Input.GetKey(KeyCode.D)){
+		if (Input.GetKey(KeyCode.D) && !rightLimit){
 			direction += Vector2.right;
 		}
-		//if (Input.GetKey(KeyCode.I)){
-		//	UIManager.SendMessage ("Invetory");
-		//}
 		if(Input.GetButtonDown("i")){			
 			UIManager.SendMessage ("Invetory");	
 		}
@@ -218,6 +233,18 @@ public class player : character {
 
 	void OnCollisionEnter2D(Collision2D col){
 		print (col.gameObject.tag);
+		if(col.gameObject.tag =="r_limit"){
+			rightLimit	= true;
+		}
+		if(col.gameObject.tag =="l_limit"){
+			leftLimit	= true;
+		}
+		if(col.gameObject.tag =="top_limit"){
+			topLimit	= true;
+		}
+		if(col.gameObject.tag =="bot_limit"){
+			botLimit	= true;
+		}
 	}
 
 	void OnCollisionStay2D(Collision2D col){
@@ -308,6 +335,20 @@ public class player : character {
 				col.gameObject.SendMessage ("damage",playerDamage);
 			}
 		}
+		//--------------------------------------------------
+		if(col.gameObject.tag =="r_limit"){
+			rightLimit	= true;
+		}
+		if(col.gameObject.tag =="l_limit"){
+			leftLimit	= true;
+		}
+		if(col.gameObject.tag =="top_limit"){
+			topLimit	= true;
+		}
+		if(col.gameObject.tag =="bot_limit"){
+			botLimit	= true;
+		}
+		//--------------------------------------------------
 	}
 
 	void OnCollisionExit2D(Collision2D col){
@@ -321,7 +362,14 @@ public class player : character {
 		UIManager.SendMessage ("closeTent");
 		UIManager.SendMessage ("closeCampFire");
 		UIManager.SendMessage ("closeFishingMenu");
+		rightLimit	= false;
+		leftLimit	= false;
+		topLimit	= false;
+		botLimit	= false;
 	}
+
+		
+
 
 	//public void Create(string name, int prefabCode ,string material, int qtd){
 	public void Create(string name){	
