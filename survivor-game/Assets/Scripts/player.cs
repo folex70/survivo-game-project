@@ -199,6 +199,10 @@ public class player : character {
 				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
 				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [10];
 			} 
+			else if (slot.name == "meat") {
+				//Slots [Inventory.IndexOf(slot)+1].GetComponent<Image> ().sprite = Sprites [6];
+				Slots [Inventory.IndexOf(slot)].GetComponent<Image> ().sprite = Sprites [11];
+			} 
 		}		
 	}
 
@@ -260,7 +264,7 @@ public class player : character {
 			ableToOpenCampFireMenu = false;
 			ableToFishing = false;
 			ableToAttack = false;
-		} else if (col.gameObject.tag == "fruit" 	|| col.gameObject.tag == "wood" 	|| col.gameObject.tag == "woodPile" 	||
+		} else if (col.gameObject.tag == "fruit" 	|| col.gameObject.tag == "wood" 	|| col.gameObject.tag == "woodPile" 	|| col.gameObject.tag == "meat" || 
 		           col.gameObject.tag == "string" 	|| col.gameObject.tag == "grass" 	|| col.gameObject.tag == "rod" 			|| col.gameObject.tag == "fish" ||
 				   col.gameObject.tag == "antidote" || col.gameObject.tag == "poison" 	|| col.gameObject.tag == "cookedFish" 	|| col.gameObject.tag == "cookedMeat" ) {
 			//pick fruit
@@ -294,6 +298,13 @@ public class player : character {
 			ableToFishing = true;
 			ableToAttack = false;
 		} else if (col.gameObject.tag == "snake") {
+			ableToPick = false;
+			ableToOpenTentMenu = false;
+			ableToOpenCampFireMenu = false;
+			ableToFishing = false;
+			ableToAttack = true;
+		}
+		else if (col.gameObject.tag == "boar") {
 			ableToPick = false;
 			ableToOpenTentMenu = false;
 			ableToOpenCampFireMenu = false;
@@ -439,7 +450,7 @@ public class player : character {
 		}
 		//requeres "qtd" "material" for create a "name" (name of material)
 		if (countInInvetory >= qtd && countInInvetory2 >= qtd2) {
-			Instantiate (Prefabs [prefabCode], new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y, 0), Quaternion.identity);	
+			Instantiate (Prefabs [prefabCode], new Vector3 (gameObject.transform.position.x+1, gameObject.transform.position.y, 0), Quaternion.identity);	
 			int countRemovals = 0;
 			int countRemovals2 = 0;
 			foreach (Item slot in Inventory.ToArray()) {
@@ -489,6 +500,10 @@ public class player : character {
 		if(randPoison == 5){
 			poisoned = true;
 		}
+	}
+	//--------------------------------------------------------------------
+	public void boarDamage(int d){
+		life = life - d;
 	}
 	//--------------------------------------------------------------------
 	public void UseItem(int selectedItem){

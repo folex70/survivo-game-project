@@ -36,6 +36,7 @@ TagManager:
   - l_limit
   - bot_limit
   - top_limit
+  - boar
   layers:
   - Default
   - TransparentFX
