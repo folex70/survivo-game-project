@@ -20,6 +20,9 @@ public class player : character {
 	public bool topLimit;
 	public bool botLimit;
 	//-------------------------------
+	AudioSource audio;
+	public AudioClip  eatSound;
+	//-------------------------------
 	public float statusTime; 
 	public float foodTime; 
 	public bool ableToChopTree;
@@ -47,6 +50,7 @@ public class player : character {
 	//-------------------------------
 	// Use this for initialization
 	void Start (){
+		audio = GetComponent<AudioSource>();
 		life = 100;
 		food = 100;
 		playerDamage = 5;
@@ -485,6 +489,7 @@ public class player : character {
 		print("eat something, restores hp: "+recover);
 		food = food + recover;
 		if(food > 100){food = 100;}	
+		audio.PlayOneShot(eatSound, 0.7F);
 	}
 	//--------------------------------------------------------------------
 	public void rest(int recover){
