@@ -22,6 +22,11 @@ public class player : character {
 	//-------------------------------
 	AudioSource audio;
 	public AudioClip  eatSound;
+	public AudioClip  chopSound;
+	public AudioClip  createSound;
+	public AudioClip  pickSound;
+	public AudioClip  fishSound;
+	public AudioClip  cutSound;
 	//-------------------------------
 	public float statusTime; 
 	public float foodTime; 
@@ -327,11 +332,13 @@ public class player : character {
 		if(Input.GetButtonDown("Fire1")){
 			if (ableToChopTree) {
 				chop = 1;
+				audio.PlayOneShot(chopSound, 0.7F);
 			} 
 			if (ableToPick) {
 				if (Inventory.Count < 9) {
 					//Inventory.Add (new Item (Inventory.Count + 1, col.gameObject.tag));	
 					Inventory.Add (new Item (Inventory.Count, col.gameObject.tag));	
+					audio.PlayOneShot(pickSound, 0.7F);
 					col.gameObject.SendMessage ("DesactiveMaterial");
 				} else {
 					print ("inventory full");
@@ -410,6 +417,7 @@ public class player : character {
 			material = "rod";
 			prefabCode = 3;
 			qtd = 1;
+			audio.PlayOneShot(fishSound, 0.7F);
 		}
 		else if(name == "string") {
 			material = "grass";
@@ -478,7 +486,8 @@ public class player : character {
 						break;
 					}
 				}
-			}				
+			}	
+			audio.PlayOneShot(createSound, 0.7F);			
 		} else {
 			print("Not enough material. Needs: "+qtd+" "+material+" and "+qtd2+" material "+material2);
 		}
